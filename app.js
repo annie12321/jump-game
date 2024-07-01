@@ -1,17 +1,48 @@
+import Player from "./player-class.js";
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+// game element sizes
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 200;
+const PLAYER_WIDTH = 58;
+const PLAYER_HEIGHT = 62; // width and height should be proportional to the player image
+const MAX_JUMP_HEIGHT = GAME_HEIGHT;
+const MIN_JUMP_HEIGHT = GAME_HEIGHT * 0.75;
 
-// scaling to screen window size
+// game objects
+let player = null;
+
 let scaleRatio = null;
 let previousTime = null;
 
+function createSprites() {
+    const playerWidthInGame = PLAYER_WIDTH * scaleRatio;
+    const playerHeightInGame = PLAYER_HEIGHT * scaleRatio;
+    const maxJumpHeightInGame = MAX_JUMP_HEIGHT * scaleRatio;
+    const minJumpHeightInGame = MIN_JUMP_HEIGHT * scaleRatio;
+
+    player = new Player(
+        ctx, 
+        playerWidthInGame, 
+        playerHeightInGame, 
+        maxJumpHeightInGame, 
+        minJumpHeightInGame, 
+        scaleRatio
+    );
+
+}
+
+// set up basic game screen
 function setScreen(){
+    // scaling to screen window size
     scaleRatio = getScaleRatio();
     canvas.width = GAME_WIDTH * scaleRatio;
     canvas.height = GAME_HEIGHT * scaleRatio;
+
+    // set elements in place
+    createSprites();
 }
 
 setScreen();
@@ -52,6 +83,8 @@ function clearScreen() {
 
 // implement infinite game loop with recursion
 function gameLoop(currentTime) {
+
+    // standardize game speed over different frame rates
     if (previousTime == null) {
         previousTime = currentTime;
         requestAnimationFrame(gameLoop);
@@ -60,8 +93,16 @@ function gameLoop(currentTime) {
 
     const frameTimeDelta = currentTime - previousTime;
     previousTime = currentTime;
-    console.log(frameTimeDelta)
+    console.log(frameTimeDelta);
+
     clearScreen();
+
+    // update game objects
+
+    // draw game objects
+    player.draw();
+
+
     requestAnimationFrame(gameLoop);
 }
 
