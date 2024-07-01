@@ -9,17 +9,21 @@ let scaleRatio = null;
 
 function setScreen(){
     scaleRatio = getScaleRatio();
-    canvas.width = GAME_WIDTH;
-    canvas.height = GAME_HEIGHT;
+    canvas.width = GAME_WIDTH * scaleRatio;
+    canvas.height = GAME_HEIGHT * scaleRatio;
 }
+
+// setScreen();
 
 // setTimeout for Safari mobile rotation
-window.addEventListener("resize", () => setTimeout(setScreen, 500));
+// window.addEventListener("resize", () => setTimeout(setScreen, 500));
+
+// window.addEventListener("resize", setScreen);
 
 // for other browser mobile rotation
-if (screen.orientation) {
-    screen.orientation.addEventListener("change", setScreen);
-}
+// if (screen.orientation) {
+    // screen.orientation.addEventListener("change", setScreen);
+// }
 
 function getScaleRatio(){
     const screenHeight = Math.min(
@@ -33,7 +37,7 @@ function getScaleRatio(){
     );
 
     // if window is wider than game width
-    if (screenWidth / screenHeight < GAME_HEIGHT / GAME_WIDTH) {
+    if (screenWidth / screenHeight < GAME_WIDTH / GAME_HEIGHT) {
         return screenWidth / GAME_WIDTH;
     }
     else {
