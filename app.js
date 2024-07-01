@@ -6,6 +6,7 @@ const GAME_HEIGHT = 200;
 
 // scaling to screen window size
 let scaleRatio = null;
+let previousTime = null;
 
 function setScreen(){
     scaleRatio = getScaleRatio();
@@ -13,17 +14,15 @@ function setScreen(){
     canvas.height = GAME_HEIGHT * scaleRatio;
 }
 
-// setScreen();
+setScreen();
 
 // setTimeout for Safari mobile rotation
-// window.addEventListener("resize", () => setTimeout(setScreen, 500));
-
-// window.addEventListener("resize", setScreen);
+window.addEventListener("resize", () => setTimeout(setScreen, 500));
 
 // for other browser mobile rotation
-// if (screen.orientation) {
-    // screen.orientation.addEventListener("change", setScreen);
-// }
+if (screen.orientation) {
+    screen.orientation.addEventListener("change", setScreen);
+}
 
 function getScaleRatio(){
     const screenHeight = Math.min(
@@ -44,3 +43,26 @@ function getScaleRatio(){
         return screenHeight / GAME_HEIGHT;
     }
 }
+
+// clear screen
+function clearScreen() {
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// implement infinite game loop with recursion
+function gameLoop(currentTime) {
+    if (previousTime == null) {
+        previousTime = currentTime;
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+
+    const frameTimeDelta = currentTime - previousTime;
+    previousTime = currentTime;
+    console.log(frameTimeDelta)
+    clearScreen();
+    requestAnimationFrame(gameLoop);
+}
+
+requestAnimationFrame(gameLoop);
