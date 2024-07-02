@@ -71,4 +71,8 @@ export default class CactiPlacer {
     collideWith(sprite) {
         return this.cacti.some((cactus) => cactus.collideWith(sprite));
     }
+
+    reset() {
+        this.cacti = [];
+    }
 }

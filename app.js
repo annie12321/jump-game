@@ -35,6 +35,7 @@ let scaleRatio = null;
 let previousTime = null;
 let gameSpeed = GAME_SPEED_START;
 let gameOver = false;
+let hasAddedEventListenersForRestart = false;
 
 function createSprites() {
     const playerWidthInGame = PLAYER_WIDTH * scaleRatio;
@@ -121,6 +122,36 @@ function clearScreen() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function showGameOver() {
+    const fontSize = 70 * scaleRatio;
+    ctx.font = `${fontSize}px Verdana`;
+    ctx.fillStyle = "grey";
+    const x = canvas.width / 4.5;
+    const y = canvas.height / 2;
+    ctx.fillText("GAME OVER", x, y);
+}
+
+function setupGameReset() {
+    if(!hasAddedEventListenersForRestart) {
+        hasAddedEventListenersForRestart = true;
+
+        setTimeout(() => {
+            window.addEventListener("keyup", reset, { once: true });
+            window.addEventListener("touchstart", reset, { once: true });
+        }, 1000);
+        
+    }
+
+}
+
+function reset() {
+    hasAddedEventListenersForRestart = false;
+    gameOver = false;
+    ground.reset();
+    cactiPlacer.reset();
+    gameSpeed = GAME_SPEED_START;
+}
+
 // implement infinite game loop with recursion
 function gameLoop(currentTime) {
 
@@ -145,6 +176,7 @@ function gameLoop(currentTime) {
 
     if(!gameOver && cactiPlacer.collideWith(player)) {
         gameOver = true;
+        setupGameReset();
     }
     
     // draw game objects
@@ -152,6 +184,9 @@ function gameLoop(currentTime) {
     cactiPlacer.draw();
     player.draw();
 
+    if (gameOver) {
+        showGameOver();
+    }
 
     requestAnimationFrame(gameLoop);
 }
