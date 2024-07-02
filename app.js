@@ -1,21 +1,30 @@
 import Player from "./player-class.js";
+import Ground from "./ground-class.js"
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+
+const GAME_SPEED_START = 0.75;
+const GAME_SPEED_INCREMENT = 0.00001;
 
 // game element sizes
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 200;
 const PLAYER_WIDTH = 58;
-const PLAYER_HEIGHT = 62; // width and height should be proportional to the player image
+const PLAYER_HEIGHT = 62; // width and height should be proportional to the player png
 const MAX_JUMP_HEIGHT = GAME_HEIGHT;
 const MIN_JUMP_HEIGHT = GAME_HEIGHT * 0.75;
+const GROUND_WIDTH = 2400;
+const GROUND_HEIGHT = 24; // dependent on ground png
+const GROUND_AND_CACTUS_SPEED = 0.5;
 
 // game objects
 let player = null;
+let ground = null;
 
 let scaleRatio = null;
 let previousTime = null;
+let gameSpeed = GAME_SPEED_START;
 
 function createSprites() {
     const playerWidthInGame = PLAYER_WIDTH * scaleRatio;
@@ -23,12 +32,23 @@ function createSprites() {
     const maxJumpHeightInGame = MAX_JUMP_HEIGHT * scaleRatio;
     const minJumpHeightInGame = MIN_JUMP_HEIGHT * scaleRatio;
 
+    const groundWidthInGame = GROUND_WIDTH * scaleRatio;
+    const groundHeightInGame = GROUND_HEIGHT * scaleRatio;
+
     player = new Player(
         ctx, 
         playerWidthInGame, 
         playerHeightInGame, 
         maxJumpHeightInGame, 
         minJumpHeightInGame, 
+        scaleRatio
+    );
+
+    ground = new Ground(
+        ctx,
+        groundWidthInGame,
+        groundHeightInGame,
+        GROUND_AND_CACTUS_SPEED,
         scaleRatio
     );
 
@@ -98,8 +118,11 @@ function gameLoop(currentTime) {
     clearScreen();
 
     // update game objects
+    ground.update(gameSpeed, frameTimeDelta);
+    player.update(gameSpeed, frameTimeDelta);
 
     // draw game objects
+    ground.draw();
     player.draw();
 
 
