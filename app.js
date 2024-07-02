@@ -1,6 +1,7 @@
 import Player from "./player-class.js";
 import Ground from "./ground-class.js"
 import CactiPlacer from "./cacti-placer-class.js";
+import Score from "./score-class.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -30,6 +31,7 @@ const CACTI_CONFIG = [
 let player = null;
 let ground = null;
 let cactiPlacer = null;
+let score = null;
 
 let scaleRatio = null;
 let previousTime = null;
@@ -74,6 +76,8 @@ function createSprites() {
     })
 
     cactiPlacer = new CactiPlacer(ctx, cactiImages, scaleRatio, GROUND_AND_CACTUS_SPEED);
+
+    score = new Score(ctx, scaleRatio);
 }
 
 // set up basic game screen
@@ -158,7 +162,12 @@ function reset() {
     waitingToStart = false;
     ground.reset();
     cactiPlacer.reset();
+    score.reset();
     gameSpeed = GAME_SPEED_START;
+}
+
+function updateGameSpeed(frameTimeDelta) {
+    gameSpeed += GAME_SPEED_INCREMENT * frameTimeDelta;
 }
 
 // implement infinite game loop with recursion
@@ -181,17 +190,21 @@ function gameLoop(currentTime) {
         ground.update(gameSpeed, frameTimeDelta);
         cactiPlacer.update(gameSpeed, frameTimeDelta);
         player.update(gameSpeed, frameTimeDelta);
+        score.update(frameTimeDelta);
+        updateGameSpeed(frameTimeDelta);
     }
 
     if(!gameOver && cactiPlacer.collideWith(player)) {
         gameOver = true;
         setupGameReset();
+        score.setHighScore();
     }
     
     // draw game objects
     ground.draw();
     cactiPlacer.draw();
     player.draw();
+    score.draw();
 
     if(gameOver) {
         showGameOver();
