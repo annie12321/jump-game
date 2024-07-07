@@ -10,7 +10,7 @@ export default class Ground {
         this.x = 0;
         this.y = this.canvas.height - this.height;
 
-        this.groundImage = Object.assign(new Image(), { src: "images/ground.png" });
+        this.groundImage = Object.assign(new Image(), { src: "images/ground-color.png" });
     }
 
     update(gameSpeed, frameTimeDelta) {
